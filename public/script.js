@@ -5,7 +5,11 @@ window.addEventListener("DOMContentLoaded", () => {
             button.addEventListener("click", () => {
                 switch (button.dataset.action) {
                     case "Start":
-                        stopwatch.start();
+                        if (!stopwatch.startTime) {
+                            stopwatch.start();
+                        } else {
+                            stopwatch.restart();
+                        }
                         stopwatch.interval = setInterval(stopwatch.count, 1000);
                         screen.changeButton(button, "Stop");
                         break;
@@ -57,10 +61,13 @@ const stopwatch = {
     seconds: 0,
 
     start: () => {
-        startTime = Date.now();
+        stopwatch.startTime = Date.now();
+    },
+    restart: () => {
+        stopwatch.startTime = Date.now() - stopwatch.seconds * 1000;
     },
     count: () => {
-        const milliseconds = Date.now() - startTime;
+        const milliseconds = Date.now() - stopwatch.startTime;
         stopwatch.seconds = Math.floor(milliseconds / 1000);
         screen.updateTime(stopwatch.seconds);
     },
