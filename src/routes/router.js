@@ -1,12 +1,15 @@
 import { Router } from "express";
 
+import usersFunctions from "../controllers/usersController.js";
+import projectsFunctions from "../controllers/projectsController.js";
+import timesFunctions from "../controllers/timesController.js";
+
 const router = Router();
 
-router.get("/", (req, res) => {
-    res.status(200).send("List of times!");
-});
-router.post("/", (req, res) => {
-    res.status(201).send("Time saved!");
-});
+router.post("/users", usersFunctions.create);
+
+router.post("/projects", projectsFunctions.create);
+
+router.post("/times", timesFunctions.create);
 
 export default router;
