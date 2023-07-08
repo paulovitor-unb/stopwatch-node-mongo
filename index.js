@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use(express.static("public"));
-app.use("/time", router);
+app.use("/api", router);
 
 const host = process.env.HOST;
 const port = process.env.PORT;
