@@ -1,7 +1,28 @@
-import models from "../database/models.js";
+import crud from "../database/crud.js";
 
 const timesFunctions = {
-    create: async (req, res) => {}
+    create: async (req, res) => {
+        try {
+            const { data } = req.body;
+
+            const newTimeData = {
+                User: data.userId,
+                Project: data.projectId,
+                time: data.time,
+                formattedTime: data.formattedTime
+            };
+
+            const newTime = crud.create(newTimeData, "Time");
+
+            res.status(201).json({ data: newTime });
+        } catch (error) {
+            if (error.statusCode) {
+                res.status(error.statusCode).send(error.message);
+                return;
+            }
+            res.status(500).send(error.message);
+        }
+    }
 };
 
 export default timesFunctions;
