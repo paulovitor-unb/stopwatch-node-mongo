@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
+import os from "os";
 
 import express from "express";
 import cors from "cors";
@@ -19,4 +20,24 @@ const port = process.env.PORT;
 
 app.listen(port, host, () => {
     console.log(`Server running at http://${host}:${port}`);
+    if (process.env.MODE === "dev") {
+        const localIPv4 = getLocalIPv4();
+        if (localIPv4) {
+            console.log(`Server running at http://${localIPv4}:${port}`);
+        }
+    }
 });
+
+const getLocalIPv4 = () => {
+    const netInterfaces = os.networkInterfaces();
+
+    for (let key in netInterfaces) {
+        const localAddress = netInterfaces[key].find(
+            (element) => element.family === "IPv4"
+        );
+
+        if (localAddress?.address) {
+            return localAddress.address;
+        }
+    }
+};
