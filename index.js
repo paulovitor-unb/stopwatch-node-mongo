@@ -13,6 +13,13 @@ app.use(express.json());
 app.use(cors());
 
 app.use(express.static("public"));
+app.use("/api", (req, res, next) => {
+    if (req.method === "POST" && !req.body.data) {
+        res.status(400).send("Missing data object in request body!");
+        return;
+    }
+    next();
+});
 app.use("/api", router);
 
 const host = process.env.HOST;
