@@ -6,6 +6,10 @@ import timesFunctions from "../controllers/timesController.js";
 
 const router = Router();
 
+router.get("/", (req, res) => {
+    res.status(200).send("<h1>API running!</h1>");
+});
+
 router.post("/users", usersFunctions.create);
 
 router.post("/projects", projectsFunctions.create);
