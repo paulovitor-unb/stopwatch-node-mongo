@@ -9,7 +9,7 @@ const projectsFunctions = {
                 name: data.name
             };
 
-            const newProject = crud.create(newProjectData, "Project");
+            const newProject = await crud.create(newProjectData, "Project");
 
             res.status(201).json({ data: newProject });
         } catch (error) {

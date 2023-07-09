@@ -12,7 +12,7 @@ const timesFunctions = {
                 formattedTime: data.formattedTime
             };
 
-            const newTime = crud.create(newTimeData, "Time");
+            const newTime = await crud.create(newTimeData, "Time");
 
             res.status(201).json({ data: newTime });
         } catch (error) {

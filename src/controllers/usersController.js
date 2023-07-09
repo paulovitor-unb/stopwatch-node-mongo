@@ -9,7 +9,7 @@ const usersFunctions = {
                 name: data.name
             };
 
-            const newUser = crud.create(newUserData, "User");
+            const newUser = await crud.create(newUserData, "User");
 
             res.status(201).json({ data: newUser });
         } catch (error) {
