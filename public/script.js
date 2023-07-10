@@ -14,17 +14,19 @@ window.addEventListener("DOMContentLoaded", () => {
                         screen.changeButton(button, "Stop");
                         break;
                     case "Stop":
-                        screen.changeButton(button, "Start");
                         stopwatch.pause();
+                        screen.changeButton(button, "Start");
                         break;
                     case "Reset":
                         stopwatch.pause();
                         stopwatch.reset();
+                        screen.changeButton(button, "Start");
                         break;
                     case "Save":
                         stopwatch.save();
                         stopwatch.pause();
                         stopwatch.reset();
+                        screen.changeButton(button, "Start");
                         break;
                     default:
                         console.log("Error => Invalid action!");
