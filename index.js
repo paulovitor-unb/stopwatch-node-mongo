@@ -19,7 +19,6 @@ app.use("/api", errorsMiddleware.checkMissingData);
 app.use("/api", router);
 
 const port = process.env.PORT;
-
 app.listen(port, () => {
     console.log(`Server running!`);
     if (process.env.NODE_ENV === "development") {
