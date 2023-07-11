@@ -1,6 +1,6 @@
 import crud from "../database/crud.js";
 
-const usersFunctions = {
+const usersController = {
     create: async (req, res) => {
         try {
             const { data } = req.body;
@@ -22,4 +22,4 @@ const usersFunctions = {
     }
 };
 
-export default usersFunctions;
+export default usersController;

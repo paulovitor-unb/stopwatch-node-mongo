@@ -1,6 +1,6 @@
 import crud from "../database/crud.js";
 
-const timesFunctions = {
+const timesController = {
     create: async (req, res) => {
         try {
             const { data } = req.body;
@@ -25,4 +25,4 @@ const timesFunctions = {
     }
 };
 
-export default timesFunctions;
+export default timesController;

@@ -1,4 +1,4 @@
-import mongoose from "./connection.js";
+import mongoose from "./mongoose.js";
 
 const schemas = {
     userSchema: new mongoose.Schema(
