@@ -5,6 +5,7 @@ import os from "os";
 import express from "express";
 import cors from "cors";
 
+import errorsMiddleware from "./src/middlewares/errorsMiddleware.js";
 import router from "./src/routes/router.js";
 
 const app = express();
@@ -13,24 +14,18 @@ app.use(express.json());
 app.use(cors());
 
 app.use(express.static("public"));
-app.use("/api", (req, res, next) => {
-    if (req.method === "POST" && !req.body.data) {
-        res.status(400).send("Missing data object in request body!");
-        return;
-    }
-    next();
-});
+
+app.use("/api", errorsMiddleware.checkMissingData);
 app.use("/api", router);
 
-const host = process.env.HOST;
 const port = process.env.PORT;
 
-app.listen(port, host, () => {
-    console.log(`Server running at http://${host}:${port}`);
-    if (process.env.MODE === "dev") {
+app.listen(port, () => {
+    console.log(`Server running!`);
+    if (process.env.NODE_ENV === "development") {
         const localIPv4 = getLocalIPv4();
         if (localIPv4) {
-            console.log(`Server running at http://${localIPv4}:${port}`);
+            console.log(`Server @ http://${localIPv4}:${port}`);
         }
     }
 });
