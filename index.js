@@ -1,12 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
-import os from "os";
 
 import express from "express";
 import cors from "cors";
 
 import errorsMiddleware from "./src/middlewares/errorsMiddleware.js";
 import router from "./src/routes/router.js";
+import getLocalIPv4Service from "./src/services/getLocalIPv4Service.js";
 
 const app = express();
 
@@ -22,23 +22,6 @@ const port = process.env.PORT;
 app.listen(port, () => {
     console.log(`Server running!`);
     if (process.env.NODE_ENV === "development") {
-        const localIPv4 = getLocalIPv4();
-        if (localIPv4) {
-            console.log(`Server @ http://${localIPv4}:${port}`);
-        }
+        getLocalIPv4Service(port);
     }
 });
-
-const getLocalIPv4 = () => {
-    const netInterfaces = os.networkInterfaces();
-
-    for (let key in netInterfaces) {
-        const localAddress = netInterfaces[key].find(
-            (element) => element.family === "IPv4"
-        );
-
-        if (localAddress?.address) {
-            return localAddress.address;
-        }
-    }
-};
