@@ -1,4 +1,5 @@
 import models from "../database/models.js";
+import errorsMiddleware from "../middlewares/errorsMiddleware.js";
 import populateDocumentService from "../services/populateDocumentService.js";
 
 const crud = {
@@ -31,7 +32,9 @@ const crud = {
         const document = await models[modelName].findById(id);
 
         if (!document) {
-            throw new Error(`${modelName} with id ${id} not found!`);
+            throw new errorsMiddleware.NotFoundError(
+                `${modelName} with id ${id} not found!`
+            );
         }
 
         await populateDocumentService(modelName, document);
@@ -46,8 +49,10 @@ const crud = {
             { new: true }
         );
 
-        if (!updatedDocument) {
-            throw new Error(`${modelName} with id ${id} not found!`);
+        if (!document) {
+            throw new errorsMiddleware.NotFoundError(
+                `${modelName} with id ${id} not found!`
+            );
         }
 
         await populateDocumentService(modelName, updatedDocument);
