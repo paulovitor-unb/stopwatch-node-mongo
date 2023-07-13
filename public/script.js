@@ -37,11 +37,14 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 const screen = {
-    updateTime: (seconds) => {
-        document.querySelector("#time").innerText = screen.formatTime(seconds);
+    updateTime: (milliseconds) => {
+        const formattedTime = screen.formatTime(milliseconds);
+        document.querySelector("#time").innerText = formattedTime;
     },
 
-    formatTime: (seconds) => {
+    formatTime: (milliseconds) => {
+        const seconds = Math.floor(milliseconds / 1000);
+
         const hh = `${Math.floor(seconds / 3600)}`.padStart(2, "0");
         const mm = `${Math.floor(seconds / 60) % 60}`.padStart(2, "0");
         const ss = `${seconds % 60}`.padStart(2, "0");
@@ -60,29 +63,71 @@ const screen = {
 const stopwatch = {
     startTime: null,
     interval: null,
-    seconds: 0,
+    milliseconds: 0,
 
     start: () => {
         stopwatch.startTime = Date.now();
     },
     restart: () => {
-        stopwatch.startTime = Date.now() - stopwatch.seconds * 1000;
+        stopwatch.startTime = Date.now() - stopwatch.milliseconds;
     },
     count: () => {
-        const milliseconds = Date.now() - stopwatch.startTime;
-        stopwatch.seconds = Math.floor(milliseconds / 1000);
-        screen.updateTime(stopwatch.seconds);
+        stopwatch.milliseconds = Date.now() - stopwatch.startTime;
+        screen.updateTime(stopwatch.milliseconds);
     },
     reset: () => {
         stopwatch.startTime = null;
-        stopwatch.seconds = 0;
-        screen.updateTime(stopwatch.seconds);
+        stopwatch.milliseconds = 0;
+        screen.updateTime(stopwatch.milliseconds);
     },
     pause: () => {
         clearInterval(stopwatch.interval);
         stopwatch.interval = null;
     },
-    save: () => {
-        console.log(stopwatch.seconds);
+    save: async () => {
+        const url = `${window.location.origin}/api/times`;
+        const data = {
+            userId: document.querySelector("#userId").value,
+            projectId: document.querySelector("#projectId").value,
+            time: Math.floor(stopwatch.milliseconds / 1000),
+            formattedTime: document.querySelector("#time").innerText
+        };
+
+        try {
+            const response = await fetchService(url, data, "", "POST");
+
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(message);
+            }
+
+            const newTime = await response.json();
+
+            console.log(newTime.data);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+};
+
+const fetchService = async (url, data, auth, method) => {
+    switch (method) {
+        case "GET":
+            stringifiedData = stringifyNestedObject(data);
+            const query = new URLSearchParams(stringifiedData).toString();
+
+            url = `${url}?${query}`;
+
+            return await fetch(url, { headers: { Authorization: auth } });
+        default:
+            return await fetch(url, {
+                method,
+                body: JSON.stringify({ data }),
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: auth
+                }
+            });
     }
 };

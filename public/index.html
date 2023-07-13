@@ -10,6 +10,32 @@
     </head>
     <body>
         <section id="stopwatch">
+            <div
+                style="
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-evenly;
+                "
+            >
+                <div style="display: flex; flex-direction: column">
+                    <label for="user">User:</label>
+                    <select id="userId">
+                        <option value="64aa1950a27772d257916506">Élida</option>
+                        <option value="userId2">user2</option>
+                    </select>
+                    <!-- <button data-endpoint="users">new</button> -->
+                </div>
+                <div style="display: flex; flex-direction: column">
+                    <label for="project">Project:</label>
+                    <select id="projectId">
+                        <option value="64aa19e90b50b8d32b016e33">
+                            Trabalho Zil
+                        </option>
+                        <option value="projectId2">project2</option>
+                    </select>
+                    <!-- <button data-endpoint="projects">new</button> -->
+                </div>
+            </div>
             <h1 id="time">00:00:00</h1>
             <div id="stopwatchButtons">
                 <button data-action="Reset" class="red">Reset</button>
