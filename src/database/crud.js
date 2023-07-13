@@ -1,33 +1,59 @@
 import models from "../database/models.js";
+import populateDocumentService from "../services/populateDocumentService.js";
 
 const crud = {
-    create: async (data, modelName) => {
-        try {
-            const document = new models[modelName](data);
-            const newDocument = await document.save();
+    create: async (modelName, data) => {
+        const document = new models[modelName](data);
+        const newDocument = await document.save();
 
-            if (populateData[modelName]?.length > 0) {
-                await populateDocument(newDocument, modelName);
-            }
+        await populateDocumentService(modelName, newDocument);
 
-            return newDocument;
-        } catch (error) {
-            throw error;
+        return newDocument;
+    },
+
+    readList: async (modelName, data) => {
+        const { find, select, sort, limit } = data;
+
+        const documentsList = await models[modelName]
+            .find(find)
+            .select(select)
+            .sort(sort)
+            .limit(limit);
+
+        for (document of documentsList) {
+            await populateDocumentService(modelName, document);
         }
-    }
-};
 
-const populateDocument = async (document, modelName) => {
-    for (const data of populateData[modelName]) {
-        await document.populate(data);
-    }
-};
+        return documentsList;
+    },
 
-const populateData = {
-    Time: [
-        { path: "User", select: "-_id name" },
-        { path: "Project", select: "-_id name" }
-    ]
+    read: async (modelName, id) => {
+        const document = await models[modelName].findById(id);
+
+        if (!document) {
+            throw new Error(`${modelName} with id ${id} not found!`);
+        }
+
+        await populateDocumentService(modelName, document);
+
+        return document;
+    },
+
+    update: async (modelName, id, data) => {
+        const updatedDocument = await models[modelName].findByIdAndUpdate(
+            id,
+            data,
+            { new: true }
+        );
+
+        if (!updatedDocument) {
+            throw new Error(`${modelName} with id ${id} not found!`);
+        }
+
+        await populateDocumentService(modelName, updatedDocument);
+
+        return updatedDocument;
+    }
 };
 
 export default crud;
