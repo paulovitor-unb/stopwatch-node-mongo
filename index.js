@@ -5,6 +5,7 @@ import express from "express";
 import cors from "cors";
 
 import errorsMiddleware from "./src/middlewares/errorsMiddleware.js";
+const { errorsCheck } = errorsMiddleware;
 import router from "./src/routes/router.js";
 import getLocalIPv4Service from "./src/services/getLocalIPv4Service.js";
 
@@ -15,7 +16,7 @@ app.use(cors());
 
 app.use(express.static("public"));
 
-app.use("/api", errorsMiddleware.checkMissingData);
+app.use("/api", errorsCheck.missingData);
 app.use("/api", router);
 
 const port = process.env.PORT;
