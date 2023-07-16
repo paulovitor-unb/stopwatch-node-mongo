@@ -1,14 +1,16 @@
-import crud from "../database/crud.js";
+import modelsController from "./modelsController.js";
 import parseNestedQueryStringService from "../services/parseNestedQueryStringService.js";
+import errorsMiddleware from "../middlewares/errorsMiddleware.js";
+const { errors } = errorsMiddleware;
 
 const routerController = {
     create: async (req, res) => {
         try {
-            const { name } = req.params;
+            const { modelName } = req.params;
             const { data } = req.body;
 
-            let newData = {};
-            switch (name) {
+            let newData;
+            switch (modelName) {
                 case "users":
                 case "projects":
                     newData = { name: data.name };
@@ -22,16 +24,18 @@ const routerController = {
                     };
                     break;
                 default:
-                    break;
+                    throw new errors.BadRequest(`Invalid model ${modelName}`);
             }
 
-            const newDocument = await crud.create(models[name], newData);
+            const newDocument = await modelsController.create(
+                models[modelName],
+                newData
+            );
 
             res.status(201).json({ data: newDocument });
         } catch (error) {
             if (error.statusCode) {
-                res.status(error.statusCode).send(error.message);
-                return;
+                return res.status(error.statusCode).send(error.message);
             }
             res.status(500).send(error.message);
         }
@@ -39,21 +43,20 @@ const routerController = {
 
     readList: async (req, res) => {
         try {
-            const { name } = req.params;
+            const { modelName } = req.params;
             const query = parseNestedQueryStringService(req.query);
 
             const searchQuery = { ...query };
 
-            const documentsList = await crud.readList(
-                models[name],
+            const documentsList = await modelsController.readList(
+                models[modelName],
                 searchQuery
             );
 
             res.status(200).json({ data: documentsList });
         } catch (error) {
             if (error.statusCode) {
-                res.status(error.statusCode).send(error.message);
-                return;
+                return res.status(error.statusCode).send(error.message);
             }
             res.status(500).send(error.message);
         }
@@ -61,15 +64,14 @@ const routerController = {
 
     read: async (req, res) => {
         try {
-            const { name, id } = req.params;
+            const { modelName, id } = req.params;
 
-            const document = await crud.read(models[name], id);
+            const document = await modelsController.read(models[modelName], id);
 
             res.status(200).json({ data: document });
         } catch (error) {
             if (error.statusCode) {
-                res.status(error.statusCode).send(error.message);
-                return;
+                return res.status(error.statusCode).send(error.message);
             }
             res.status(500).send(error.message);
         }
@@ -77,13 +79,13 @@ const routerController = {
 
     update: async (req, res) => {
         try {
-            const { name, id } = req.params;
+            const { modelName, id } = req.params;
             const { data } = req.body;
 
             const updateData = { ...data };
 
-            const updatedDocument = await crud.update(
-                models[name],
+            const updatedDocument = await modelsController.update(
+                models[modelName],
                 id,
                 updateData
             );
@@ -91,8 +93,7 @@ const routerController = {
             res.status(200).json({ data: updatedDocument });
         } catch (error) {
             if (error.statusCode) {
-                res.status(error.statusCode).send(error.message);
-                return;
+                return res.status(error.statusCode).send(error.message);
             }
             res.status(500).send(error.message);
         }

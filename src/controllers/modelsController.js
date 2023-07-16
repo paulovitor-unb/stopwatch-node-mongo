@@ -1,8 +1,9 @@
 import models from "../database/models.js";
-import errorsMiddleware from "../middlewares/errorsMiddleware.js";
 import populateDocumentService from "../services/populateDocumentService.js";
+import errorsMiddleware from "../middlewares/errorsMiddleware.js";
+const { errors } = errorsMiddleware;
 
-const crud = {
+const modelsController = {
     create: async (modelName, data) => {
         const document = new models[modelName](data);
         const newDocument = await document.save();
@@ -32,9 +33,7 @@ const crud = {
         const document = await models[modelName].findById(id);
 
         if (!document) {
-            throw new errorsMiddleware.NotFoundError(
-                `${modelName} with id ${id} not found!`
-            );
+            throw new errors.NotFound(`${modelName} with id ${id} not found!`);
         }
 
         await populateDocumentService(modelName, document);
@@ -50,9 +49,7 @@ const crud = {
         );
 
         if (!document) {
-            throw new errorsMiddleware.NotFoundError(
-                `${modelName} with id ${id} not found!`
-            );
+            throw new errors.NotFound(`${modelName} with id ${id} not found!`);
         }
 
         await populateDocumentService(modelName, updatedDocument);
@@ -61,4 +58,4 @@ const crud = {
     }
 };
 
-export default crud;
+export default modelsController;
